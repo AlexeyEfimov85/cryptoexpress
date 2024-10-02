@@ -1,11 +1,9 @@
 import { INCREASE_COUNT, DECREASE_COUNT } from "../actions/countaction";
 
-type InitialState = {
-    count: number;
-}
 
-const initialState: InitialState = {
-    count: 0
+
+const initialState = {
+    count: []
 }
 
 export const countReducer = (state = initialState, action: { type: string; count: number; }) => {
@@ -13,13 +11,13 @@ export const countReducer = (state = initialState, action: { type: string; count
         case INCREASE_COUNT: {
             return {
                 ...state,
-                count: state.count + 1
+                count: [{}, {}, {}]
             }
         }
         case DECREASE_COUNT: {
             return {
                 ...state,
-                count: state.count - 1
+                count: [{id: 2, currentRate: '63629.3312', currentDate: '2024-09-25T11:27:58+00:00'}],
             }
         }
         default:

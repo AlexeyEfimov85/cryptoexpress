@@ -1,20 +1,21 @@
+import { Data } from "../../App";
 import { GET_DATA_BY_DAYS, GET_DATA_BY_DAYS_SUCCESS, GET_DATA_BY_DAYS_FAILED } from "../actions/getdatabydays";
 
 type InitialState = {
     dataRequest: boolean;
     dataFailed: boolean;
-    data: [];
+    data: Data[] | null;
 }
 
 const initialState: InitialState =
 {
     dataRequest: false,
     dataFailed: false,
-    data: [],
+    data: null,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getDataByDaysReducer = (state = initialState, action: { type: string; data: any; }) => {
+export const getDataByDaysReducer = (state = initialState, action: { type: string; data: Data[]; }) => {
     switch (action.type) {
         case GET_DATA_BY_DAYS: {
             return {
@@ -36,9 +37,9 @@ export const getDataByDaysReducer = (state = initialState, action: { type: strin
                 dataRequest: false,
                 dataFailed: true,
             }
-        }
+        } 
         default:
-            return state
+            return {...state}
     }
 
 }

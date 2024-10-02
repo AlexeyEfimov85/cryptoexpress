@@ -39,7 +39,7 @@ async function getData() {
     }
 }
 
-setInterval(getData, 8500000);
+setInterval(getData, 1000);
 
 app.get("/days", async function (req: Request, res: Response) {
     const days = req.body.days;

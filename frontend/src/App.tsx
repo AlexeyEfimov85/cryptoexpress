@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import './App.css'
-import { useDispatch, useSelector } from './types/hooks';
+import { useAppDispatch, useAppSelector } from './types/hooks';
 import { getDataByDaysAction } from './services/actions/getdatabydays';
 import {
   AreaChart,
@@ -11,59 +11,69 @@ import {
   Tooltip,
 } from "recharts";
 
+export type Data = {
+  id: number,
+  currentDate: string,
+  currentRate: string
+}
+
 function App() {
   const [count, setCount] = useState(7);
-  const recivedData = useSelector((store) => store.getDataByDaysReducer.data[0])
-  console.log(recivedData)
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getDataByDaysAction(count))
-  }, [count, dispatch])
+  const coun = useAppSelector((store) => store.countReducer.count)
+  const [data, setData] = useState([
+    {
+      name: "1",
+      курс: 61300,
+    },
+    {
+      name: "2",
+      курс: 61700,
+    },
+    {
+      name: "3",
+      курс: 61500,
+    },
+    {
+      name: "4",
+      курс: 62000,
+    },
+    {
+      name: "5",
+      курс: 61000,
+    },
+    {
+      name: "6",
+      курс: 64000,
+    },
+    {
+      name: "7",
+      курс: 65000,
+    },
+  ])
 
-  const data = [
-    {
-      name: "Page A",
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: "Page B",
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: "Page C",
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: "Page D",
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: "Page E",
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: "Page F",
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: "Page G",
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  const recivedData: Data[] | null = useAppSelector((store) => store.getDataByDaysReducer.data);
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getDataByDaysAction())
+    if (recivedData) {
+      generateData(recivedData, count)
+    }
+  }, [count])
+  
+
+
+  const generateData = (recivedData: Data[], count: number) => {
+    const slicedData = recivedData.slice(recivedData.length - count)
+      const chartData = slicedData.map((item, i) => {
+      const курс = +item.currentRate;
+      const name = i.toString();
+      return { курс, name }
+    })
+    setData(chartData)
+  }
+
+
 
   return (
     <>
@@ -81,14 +91,15 @@ function App() {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
-          <YAxis />
+          <YAxis domain={[50000, 70000]} />
           <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+          <Area type="monotone" dataKey="курс" stroke="#8884d8" fill="#8884d8" />
         </AreaChart>
       </div>
       <div className="card">
         <button onClick={() => {
           setCount(1)
+          dispatch({ type: "INCREASE_COUNT" })
         }}>
           курс за 1 день
         </button>

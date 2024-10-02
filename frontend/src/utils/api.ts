@@ -1,4 +1,4 @@
-export const baseUrl: string = "http://localhost:3000";
+export const baseUrl: string = "http://localhost:4000";
 export const checkResponse = (res: { ok: unknown; json: () => unknown; status: unknown; }) => {
   if (res.ok) {
     return res.json();
