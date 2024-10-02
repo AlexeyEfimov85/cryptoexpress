@@ -42,11 +42,10 @@ async function getData() {
 setInterval(getData, 1000);
 
 app.get("/days", async function (req: Request, res: Response) {
-    const days = req.body.days;
     console.log(req.body)
-    const data = await myDataSource.getRepository(Currency).find(/* {
-        take: days,
-      } */);
+    const data = await myDataSource.getRepository(Currency).find( {
+        take: 30,
+      } );
     return res.send(data)
 })
 

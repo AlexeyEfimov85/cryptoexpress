@@ -19,7 +19,6 @@ export type Data = {
 
 function App() {
   const [count, setCount] = useState(7);
-  const coun = useAppSelector((store) => store.countReducer.count)
   const [data, setData] = useState([
     {
       name: "1",
@@ -97,12 +96,6 @@ function App() {
         </AreaChart>
       </div>
       <div className="card">
-        <button onClick={() => {
-          setCount(1)
-          dispatch({ type: "INCREASE_COUNT" })
-        }}>
-          курс за 1 день
-        </button>
         <button onClick={() => {
           setCount(3)
         }}>
