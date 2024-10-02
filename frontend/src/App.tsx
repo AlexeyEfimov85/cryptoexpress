@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { useAppDispatch, useAppSelector } from './types/hooks';
 import { getDataByDaysAction } from './services/actions/getdatabydays';
