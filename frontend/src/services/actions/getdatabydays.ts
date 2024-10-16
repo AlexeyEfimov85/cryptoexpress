@@ -4,13 +4,13 @@ export const GET_DATA_BY_DAYS = 'GET_DATA_BY_DAYS';
 export const GET_DATA_BY_DAYS_SUCCESS = 'GET_DATA_BY_DAYS_SUCCESS';
 export const GET_DATA_BY_DAYS_FAILED = 'GET_DATA_BY_DAYS_FAILED';
 
-export function getDataByDaysAction() {
+export function getDataByDaysAction(count: string) {
   return function(dispatch: AppDispatch) {
     dispatch({
       type: GET_DATA_BY_DAYS,
     });
         // Запрашиваем данные у сервера
-        request(`${baseUrl + '/days'}`)
+        request(`${baseUrl + '/' + count}`)
     .then ((data)=> {
         dispatch({
             type: GET_DATA_BY_DAYS_SUCCESS,

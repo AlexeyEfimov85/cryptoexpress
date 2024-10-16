@@ -1,71 +1,103 @@
 import express from 'express';
 import { Request, Response } from 'express';
-import { Currency } from './src/entity/currency.entity'
+import { Currency, CurrencyDay } from './src/entity/currency.entity'
 import { myDataSource } from './app-data-source';
-import axios from 'axios';
 import { Between } from 'typeorm';
 var cors = require('cors');
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { getDataByDay, getDataByHour, getDataByWeek, initialSetData } from './src/utils/get-and-emit-data';
 
-const { PORT = 3000 } = process.env;
+const { PORT = 4000 } = process.env;
 
 const app = express();
+
+
+const httpServer = createServer();
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173"
+  }
+});
+
+io.on("connection", (socket) => {
+  // ...
+});
+httpServer.listen(3030);
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 
 myDataSource
-    .initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
-    })
+  .initialize()
+  .then(() => {
+    console.log("Data Source has been initialized!")
+  })
+  .then(() => {
+    initialSetData()
+  })
+  .catch((err) => {
+    console.error("Error during Data Source initialization:", err)
+  })
 
-async function getData() {
-    try {
-        const response = await axios.get('https://api.coindesk.com/v1/bpi/currentprice.json');
-        const currentRate = response.data.bpi.USD.rate_float;
-        const currentDate = response.data.time.updatedISO;
-        const newData = await myDataSource.getRepository(Currency).create({
-            currentRate : currentRate,
-            currentDate : currentDate,
-        }) 
-        const results = await myDataSource.getRepository(Currency).save(newData)
+setInterval(getDataByHour, 60000);
+setInterval(getDataByDay, 900000);
+setInterval(getDataByWeek, 15000);
 
-    } catch (error) {
-        console.error(error);
-    }
-}
 
-setInterval(getData, 1000);
+app.get("/onehour", async function (req: Request, res: Response) {
+  console.log(req.body)
+  const data = await myDataSource.getRepository(Currency).find({
+    order: {
+      currentDate: "DESC",
+    },
+    take: 60,
+  });
+  return res.send(data)
+})
 
-app.get("/days", async function (req: Request, res: Response) {
-    console.log(req.body)
-    const data = await myDataSource.getRepository(Currency).find( {
-        take: 30,
-      } );
-    return res.send(data)
+app.get("/oneday", async function (req: Request, res: Response) {
+  console.log(req.body)
+  const data = await myDataSource.getRepository(CurrencyDay).find({
+    order: {
+      currentDate: "DESC",
+    },
+    take: 96,
+  });
+  return res.send(data)
+})
+
+app.get("/oneweek", async function (req: Request, res: Response) {
+  console.log(req.body)
+  const data = await myDataSource.getRepository(CurrencyDay).find({
+    order: {
+      currentDate: "DESC",
+    },
+    take: 168,
+  });
+  return res.send(data)
 })
 
 app.post("/range", async function (req: Request, res: Response) {
-    const data = await myDataSource.getRepository(Currency).findAndCount({
-        where: [
-          {
-              currentDate: Between(
-              new Date(req.body.begining).toISOString(),
-              new Date(req.body.ending).toISOString(),
-            ),
-          },
-        ],
-      });
-    return res.send(data)
+  const data = await myDataSource.getRepository(Currency).findAndCount({
+    where: [
+      {
+        currentDate: Between(
+          new Date(req.body.begining).toISOString(),
+          new Date(req.body.ending).toISOString(),
+        ),
+      },
+    ],
+  });
+  return res.send(data)
 })
 
 
 
 app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`)
+  console.log(`App listening on port ${PORT}`)
 })
 

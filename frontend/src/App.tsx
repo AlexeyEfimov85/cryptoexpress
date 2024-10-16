@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { useAppDispatch, useAppSelector } from './types/hooks';
 import { getDataByDaysAction } from './services/actions/getdatabydays';
-import Chart from './chart';
+import Chart from './Chart';
 
 export type Data = {
   id: number,
@@ -10,32 +10,35 @@ export type Data = {
   currentRate: string
 }
 
+
+
 function App() {
-  const [count, setCount] = useState(7);
+  const [count, setCount] = useState('oneHour');
   const recivedData: Data[] | null = useAppSelector((store) => store.getDataByDaysReducer.data);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(getDataByDaysAction())
+    dispatch(getDataByDaysAction(count))
   }, [count])
+
   
   return (
     <>
-      <Chart recivedData = {recivedData} count = { count } />
+      <Chart recivedData = {recivedData} count = {count} />
       <div className="card">
         <button onClick={() => {
-          setCount(3)
+          setCount('oneHour')
         }}>
-          курс за 3 дня
+          курс за 1 час
         </button>
         <button onClick={() => {
-          setCount(7)
+          setCount('oneDay')
         }}>
-          курс за 7 дней
+          курс за 1 день
         </button>
         <button onClick={() => {
-          setCount(30)
+          setCount('oneWeek')
         }}>
-          курс за 30 дней
+          курс за 1 неделю
         </button>
 
       </div>
