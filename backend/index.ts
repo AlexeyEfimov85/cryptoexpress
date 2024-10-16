@@ -1,6 +1,6 @@
 import express from 'express';
 import { Request, Response } from 'express';
-import { Currency, CurrencyDay } from './src/entity/currency.entity'
+import { Currency, CurrencyDay, CurrencyWeek } from './src/entity/currency.entity'
 import { myDataSource } from './app-data-source';
 import { Between } from 'typeorm';
 var cors = require('cors');
@@ -72,7 +72,7 @@ app.get("/oneday", async function (req: Request, res: Response) {
 
 app.get("/oneweek", async function (req: Request, res: Response) {
   console.log(req.body)
-  const data = await myDataSource.getRepository(CurrencyDay).find({
+  const data = await myDataSource.getRepository(CurrencyWeek).find({
     order: {
       currentDate: "DESC",
     },
