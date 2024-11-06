@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Currency, CurrencyDay, CurrencyWeek } from "../entity/currency.entity";
-import { myDataSource } from './../../app-data-source';
-import { io } from './../../index';
+import { myDataSource } from '../app-data-source';
+import { io } from './../index';
 
 export function initialSetData() {
     io.on('connection', async socket => {

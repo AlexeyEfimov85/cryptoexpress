@@ -1,14 +1,16 @@
 import express from 'express';
 import { Request, Response } from 'express';
-import { Currency, CurrencyDay, CurrencyWeek } from './src/entity/currency.entity'
+import { Currency, CurrencyDay, CurrencyWeek } from './entity/currency.entity'
 import { myDataSource } from './app-data-source';
 import { Between } from 'typeorm';
 var cors = require('cors');
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { getDataByDay, getDataByHour, getDataByWeek, initialSetData } from './src/utils/get-and-emit-data';
+import { getDataByDay, getDataByHour, getDataByWeek } from './utils/get-and-emit-data';
+import process from 'process';
 
-const { PORT = 4000 } = process.env;
+const { PORT = 3000 } = process.env;
+
 
 const app = express();
 
@@ -23,7 +25,7 @@ export const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   // ...
 });
-httpServer.listen(3030);
+httpServer.listen(3010);
 
 
 app.use(express.json());
@@ -36,16 +38,13 @@ myDataSource
   .then(() => {
     console.log("Data Source has been initialized!")
   })
-  .then(() => {
-    initialSetData()
-  })
   .catch((err) => {
     console.error("Error during Data Source initialization:", err)
   })
 
 setInterval(getDataByHour, 60000);
 setInterval(getDataByDay, 900000);
-setInterval(getDataByWeek, 15000);
+setInterval(getDataByWeek, 3600000);
 
 
 app.get("/onehour", async function (req: Request, res: Response) {
